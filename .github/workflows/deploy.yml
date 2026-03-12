@@ -1,0 +1,33 @@
+name: MuleSoft CI/CD
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+
+  deploy:
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Build Mule Project
+        run: mvn clean package -DskipTests
+
+      - name: Deploy to CloudHub
+        run: |
+          mvn deploy \
+          -DmuleDeploy \
+          -Danypoint.username=${{ secrets.ANYPOINT_USER }} \
+          -Danypoint.password=${{ secrets.ANYPOINT_PASS }}
